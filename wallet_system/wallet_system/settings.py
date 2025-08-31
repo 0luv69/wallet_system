@@ -29,6 +29,8 @@ INSTALLED_APPS = [
 
     # Third-party apps
     'rest_framework',
+    'drf_yasg',
+    'corsheaders',
 
     # Local apps/ The My Appps
     'wallet_api',
@@ -115,3 +117,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+
+# cors header setting
+CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+
+
+if not CORS_ALLOW_ALL_ORIGINS:
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+    ]
