@@ -37,7 +37,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-     'wallet_api.middleware.RateLimitMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # whitenoise middleware for serving static files
+    'wallet_api.middleware.RateLimitMiddleware', # rate limiting middleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -112,6 +113,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+# Additional static files directories (if you have custom static files)
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+] if (BASE_DIR / 'static').exists() else []
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -157,10 +163,10 @@ MIN_TRANSACTION_AMOUNT = Decimal('0.01')
 MAX_TRANSACTION_AMOUNT = Decimal('50000.00')
 
 # Security headers
-# SECURE_BROWSER_XSS_FILTER = True
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-# X_FRAME_OPTIONS = 'DENY'
-# SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
 
 # configuration of Cache
 CACHES = {
