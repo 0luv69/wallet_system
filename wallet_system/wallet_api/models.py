@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from decimal import Decimal
+import secrets
 
 class User(models.Model):
     name = models.CharField(max_length=100)
@@ -85,3 +86,33 @@ class Transaction(models.Model):
 
 
 
+from django.contrib.auth.models import User as AuthUser
+
+class APIKey(models.Model):
+    """Professional API Key management"""
+    
+    name = models.CharField(max_length=100, help_text="API key name/description")
+    key = models.CharField(max_length=64, unique=True, db_index=True)
+    user = models.ForeignKey(AuthUser, on_delete=models.CASCADE, related_name='api_keys')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_used = models.DateTimeField(null=True, blank=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        db_table = 'api_keys'
+        verbose_name = 'API Key'
+        verbose_name_plural = 'API Keys'
+    
+    def save(self, *args, **kwargs):
+        if not self.key:
+            self.key = self.generate_key()
+        super().save(*args, **kwargs)
+    
+    @staticmethod
+    def generate_key():
+        """Generate secure API key"""
+        return f"wlt_{secrets.token_urlsafe(32)}"
+    
+    def __str__(self):
+        return f"{self.name} - {self.key[:8]}..."
