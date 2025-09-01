@@ -2,13 +2,15 @@ from django.db import models
 from django.core.validators import RegexValidator
 from decimal import Decimal
 import secrets
+from django.contrib.auth.models import User as AuthUser
+from django.utils import timezone
 
 class User(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     phone_regex = RegexValidator(
         regex=r'^\+?977?\d{9,11}$',
-        message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
+        message="Phone number must be entered in the format: '+9779999999999'. Up to 10 digits allowed."
     )
     phone = models.CharField(validators=[phone_regex], max_length=17)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -86,10 +88,10 @@ class Transaction(models.Model):
 
 
 
-from django.contrib.auth.models import User as AuthUser
+
 
 class APIKey(models.Model):
-    """Professional API Key management"""
+    """ API Key management"""
     
     name = models.CharField(max_length=100, help_text="API key name/description")
     key = models.CharField(max_length=64, unique=True, db_index=True)
@@ -113,6 +115,11 @@ class APIKey(models.Model):
     def generate_key():
         """Generate secure API key"""
         return f"wlt_{secrets.token_urlsafe(32)}"
+    
+    def set_expiration(self, days=30):
+        """Set expiration date for the API key"""
+        self.expires_at = timezone.now() + timezone.timedelta(days=days)
+        self.save(update_fields=['expires_at'])
     
     def __str__(self):
         return f"{self.name} - {self.key[:8]}..."

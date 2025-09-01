@@ -3,11 +3,11 @@ from rest_framework import serializers
 from django.conf import settings
 
 class WalletValidators:
-    """Professional wallet validation class"""
+    """ wallet validation class"""
     
     @staticmethod
     def validate_amount(value):
-        """Professional amount validation with configurable limits"""
+        """ amount validation with configurable limits"""
         min_amount = getattr(settings, 'MIN_TRANSACTION_AMOUNT', Decimal('0.01'))
         max_amount = getattr(settings, 'MAX_TRANSACTION_AMOUNT', Decimal('10000.00'))
         

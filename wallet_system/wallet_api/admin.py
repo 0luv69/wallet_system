@@ -1,6 +1,20 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import User, Wallet, Transaction
+from .models import User, Wallet, Transaction, APIKey
+
+@admin.register(APIKey)
+class APIKeyAdmin(admin.ModelAdmin):
+    """Professional API Key management"""
+    
+    list_display = ['name', 'key_preview', 'user', 'is_active', 'last_used', 'created_at']
+    list_filter = ['is_active', 'created_at', 'last_used']
+    search_fields = ['name', 'user__username']
+    readonly_fields = ['key', 'created_at', 'last_used']
+    
+    def key_preview(self, obj):
+        return f"{obj.key[:12]}..."
+    key_preview.short_description = 'API Key'
+
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):

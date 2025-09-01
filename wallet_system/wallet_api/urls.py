@@ -1,8 +1,11 @@
 from django.urls import path
-from .views import UserListView, UpdateWalletView, UserTransactionsView
+from .views import UserListView, UpdateWalletView, UserTransactionsView, APIKeyManagementView
 
 # URL patterns for wallet API endpoints
 urlpatterns = [
+    # API Key Management
+    path('api-keys/create/', APIKeyManagementView.as_view(), name='create-api-key'),
+
     # User Management URLs
     path('users/', UserListView.as_view(), name='user-list'),
     

@@ -13,7 +13,7 @@ SECRET_KEY = config('SECRET_KEY', default='the-key-for-default incace I forget t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG =  config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+     'wallet_api.middleware.RateLimitMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -145,8 +146,29 @@ if not CORS_ALLOW_ALL_ORIGINS:
         "http://localhost:3000",
     ]
 
-
+#  API Security Settings
+RATE_LIMITS = {
+    'default': {'requests': 100, 'window': 3600},  # 100 per hour
+    'wallet_update': {'requests': 10, 'window': 300},  # 10 per 5 min
+}
 
 # Transaction limits (configurable)
 MIN_TRANSACTION_AMOUNT = Decimal('0.01')
 MAX_TRANSACTION_AMOUNT = Decimal('50000.00')
+
+# Security headers
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+
+# configuration of Cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'TIMEOUT': 300,
+        'OPTIONS': {
+            'MAX_ENTRIES': 10000,
+        }
+    }
+}

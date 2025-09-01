@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import User, Wallet, Transaction
 from decimal import Decimal
+from .validators import WalletValidators
 
 class WalletSerializer(serializers.ModelSerializer):
     """Serializer for Wallet model - shows wallet balance info"""
@@ -52,6 +53,7 @@ class UpdateWalletSerializer(serializers.Serializer):
     amount = serializers.DecimalField(
         max_digits=12, 
         decimal_places=2,
+        validators=[WalletValidators.validate_amount],
         help_text="Amount to add or deduct from wallet"
     )
     transaction_type = serializers.ChoiceField(
