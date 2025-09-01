@@ -19,7 +19,7 @@ class UserListView(APIView):
     GET /api/users/ - List all users
     POST /api/users/ - Create new user
     """
-    
+    # requirement-1 fetch all user
     @swagger_auto_schema(
         operation_summary="List all users with wallet balances",
         operation_description="Requirement 1: Fetch all users details (name, email, phone) along with their wallet balance",
@@ -56,6 +56,7 @@ class UserListView(APIView):
             "users": serializer.data
         }, status=status.HTTP_200_OK)
     
+    # create a new user
     @swagger_auto_schema(
         operation_summary="Create a new user",
         operation_description="Create a new user with automatic wallet creation",
@@ -92,7 +93,7 @@ class UpdateWalletView(APIView):
     API View for updating wallet balance
     PUT /api/wallets/{user_id}/update/
     """
-    
+    # requirement-2 add or update amount in user's wallet
     @swagger_auto_schema(
         operation_summary="Update user's wallet balance",
         operation_description="Requirement 2: Add or update an amount in any particular user's wallet",
@@ -112,12 +113,16 @@ class UpdateWalletView(APIView):
                 examples={
                     "application/json": {
                         "message": "Wallet updated successfully",
-                        "user": "John Doe",
+                        "user": "Luv King",
+                        "user_id": 1,
+                        "user_email": "luv@king.com",
                         "transaction_type": "CREDIT",
-                        "amount": "100.00",
-                        "previous_balance": "150.50",
-                        "new_balance": "250.50",
-                        "transaction_id": 123
+                        "amount": "100.00",           
+                        "previous_balance": "150.50",  
+                        "new_balance": "250.50",      
+                        "description": "Salary deposit",
+                        "transaction_id": 123,
+                        "timestamp": "2025-09-01T00:55:24Z"
                     }
                 }
             ),
@@ -155,8 +160,8 @@ class UpdateWalletView(APIView):
                 
                 if transaction_type == 'CREDIT':
                     # Add money to wallet
-                    wallet.add_funds(amount, description or f"Added ${amount} to wallet")
-                    action_message = f"Added ${amount} to {user.name}'s wallet"
+                    wallet.add_funds(amount, description or f"Added Rs. {amount} to wallet")
+                    action_message = f"Added Rs. {amount} to {user.name}'s wallet"
                     
                 elif transaction_type == 'DEBIT':
                     # Check if sufficient funds and deduct
@@ -168,8 +173,8 @@ class UpdateWalletView(APIView):
                             "shortfall": str(amount - wallet.balance)
                         }, status=status.HTTP_400_BAD_REQUEST)
                     
-                    wallet.deduct_funds(amount, description or f"Deducted ${amount} from wallet")
-                    action_message = f"Deducted ${amount} from {user.name}'s wallet"
+                    wallet.deduct_funds(amount, description or f"Deducted Rs. {amount} from wallet")
+                    action_message = f"Deducted Rs. {amount} from {user.name}'s wallet"
                 
                 # Refresh to get updated balance
                 wallet.refresh_from_db()
@@ -202,7 +207,7 @@ class UserTransactionsView(APIView):
     API View for fetching user's transaction history
     GET /api/transactions/{user_id}/
     """
-    
+    # requirement-3 fetch user's transaction history
     @swagger_auto_schema(
         operation_summary="Get user's transaction history",
         operation_description="Requirement 3: Fetch all wallet transactions for a specific user by passing their user_id",
@@ -238,7 +243,7 @@ class UserTransactionsView(APIView):
                         "message": "Transactions retrieved successfully",
                         "user": {
                             "id": 1,
-                            "name": "John Doe",
+                            "name": "Luv King",
                             "email": "john@example.com",
                             "current_balance": "250.50"
                         },

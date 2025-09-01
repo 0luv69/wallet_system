@@ -6,7 +6,7 @@ class User(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     phone_regex = RegexValidator(
-        regex=r'^\+?1?\d{9,15}$',
+        regex=r'^\+?977?\d{9,11}$',
         message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
     )
     phone = models.CharField(validators=[phone_regex], max_length=17)
@@ -31,7 +31,7 @@ class Wallet(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f"{self.user.name}'s Wallet - Balance: ${self.balance}"
+        return f"{self.user.name}'s Wallet - Balance: Rs.{self.balance}"
     
     def add_funds(self,  amount, description=""):
         """Add funds to wallet and create transaction record"""
@@ -43,7 +43,7 @@ class Wallet(models.Model):
             wallet=self,
             amount=Decimal(str(amount)),
             transaction_type='CREDIT',
-            description=description or f"Added ${amount} to wallet"
+            description=description or f"Added Rs.{amount} to wallet"
         )
         
     def deduct_funds(self, amount,  description=""):
@@ -58,7 +58,7 @@ class Wallet(models.Model):
                 wallet=self,
                 amount=amount_decimal,
                 transaction_type='DEBIT',
-                description=description or f"Deducted ${amount} from wallet"
+                description=description or f"Deducted Rs.{amount} from wallet"
             )
             return True
 
@@ -77,7 +77,11 @@ class Transaction(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"{self.transaction_type} ${self.amount} - {self.wallet.user.name}"
+        return f"{self.transaction_type} Rs.{self.amount} - {self.wallet.user.name}"
     
     class Meta:
         ordering = ['-timestamp']
+
+
+
+
